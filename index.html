@@ -20,26 +20,55 @@
   <div id="app" class="c">
     <div class="card">
        <h4>Generate Password</h4>
-       <p v-if="password"><input id="pwd" readonly v-model="password"/> <a class="btn" v-on:click="copy">Copy</a></p>
-       <button class="btn" v-on:click="generate">Generate</button>
+       <div class="row">
+         Length
+         <select v-model="lengthStr">
+           <option value="16">16</option>
+           <option value="17">17</option>
+           <option value="18">18</option>
+           <option value="19">19</option>
+           <option value="20">20</option>
+         </select>
+       </div>
+       <div class="row">
+         Character set
+         <select v-model="charset">
+           <option value="azAZ">Letters</option>
+           <option value="azAZ09">Letters and Numbers</option>
+           <option value="azAZ09Special">Letters, Numbers & Special Characters</option>
+         </select>
+       </div>
+       <div class="row">
+         <p v-if="password"><input id="pwd" readonly v-model="password" :size="parseInt(lengthStr) + 5" /> <a class="btn" v-on:click="copy">Copy</a></p>
+       </div>
+       <div class="row">
+         <button class="btn" v-on:click="generate">Generate</button>
+       </div>
     </div>
   </div>
 
   <script>
   
     // the number of characters to encode by
-    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('')
-
+    const charsets = {
+      azAZ: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
+      azAZ09: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
+      azAZ09Special: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$%^&*()[];:.,<>'.split('')
+    }
     var app = new Vue({
       el: '#app',
       data: {
-        password: null
+        password: null,
+        lengthStr: '20',
+        charset: 'azAZ09'       
       },
       methods: {
         generate: function() {
           let str = ''
-          for(var i = 0 ; i < 16; i++) {
-            str += charset[Math.floor(Math.random() * charset.length)]
+          let cs = charsets[this.charset]
+          let len = parseInt(this.lengthStr)
+          for(var i = 0 ; i < len; i++) {
+            str += cs[Math.floor(Math.random() * cs.length)]
           }
           this.password = str
         },
