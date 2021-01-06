@@ -62,6 +62,9 @@
         lengthStr: '20',
         charset: 'azAZ09'       
       },
+      mounted: function() {
+        this.generate()
+      },
       methods: {
         generate: function() {
           let str = ''
