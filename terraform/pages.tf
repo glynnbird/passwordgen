@@ -2,7 +2,7 @@
 resource "cloudflare_pages_project" "frontend_project" {
   account_id        = var.cloudflare_account_id
   name              = "pass"
-  production_branch = "cf"
+  production_branch = "main"
   
   build_config {
     destination_dir     = "dist"
@@ -14,7 +14,7 @@ resource "cloudflare_pages_project" "frontend_project" {
     config {
       owner                         = "glynnbird"
       repo_name                     = "passwordgen"
-      production_branch             = "cf"
+      production_branch             = "main"
     }
   }
     deployment_configs {
