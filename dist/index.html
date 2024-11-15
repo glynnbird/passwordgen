@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ajusa/lit@latest/dist/lit.css" />
-  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <style>
     #pwd {
       border: none;
@@ -21,14 +21,16 @@
   <div id="app" class="c">
     <div class="card">
       <h4>Generate Password</h4>
-      <div class="row">Length <select v-model="lengthStr" @change="onChange()">
+      <div class="row">Length <select v-model="lengthStr">
           <option value="16">16</option>
           <option value="17">17</option>
           <option value="18">18</option>
           <option value="19">19</option>
           <option value="20">20</option>
+          <option value="25">25</option>
+          <option value="30">30</option>
         </select></div>
-      <div class="row">Character set <select v-model="charset" @change="onChange()">
+      <div class="row">Character set <select v-model="charset">
           <option value="azAZ">Letters</option>
           <option value="azAZ09">Letters and Numbers</option>
           <option value="azAZ09Special">Letters,
@@ -38,47 +40,53 @@
         <p v-if="password"><input id="pwd" readonly v-model="password" :size="parseInt(lengthStr) + 5" /><a class="btn"
             v-on:click="copy">Copy</a></p>
       </div>
-      <div class="row"><button class="btn" v-on:click="generate">Generate</button></div>
     </div>
   </div>
   <script>
+    const { createApp, ref, computed } = Vue
+
     // the number of characters to encode by
     const charsets = {
       azAZ: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
       azAZ09: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
       azAZ09Special: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$%^&*()[];:.,<>'.split('')
     }
-    var app = new Vue({
-      el: '#app',
-      data: {
-        password: null,
-        lengthStr: '20',
-        charset: 'azAZ09'
-      },
-      mounted: function () {
-        this.generate()
-      },
-      methods: {
-        generate: function () {
+
+    createApp({
+      setup() {
+        const lengthStr = ref(1)
+        lengthStr.value = '20'
+        const charset = ref(2)
+        charset.value = 'azAZ'
+
+        
+
+        const password = computed(() => {
           let str = ''
-          let cs = charsets[this.charset]
-          let len = parseInt(this.lengthStr)
+          let cs = charsets[charset.value]
+          let len = parseInt(lengthStr.value)
           for (var i = 0; i < len; i++) {
             str += cs[Math.floor(Math.random() * cs.length)]
           }
-          this.password = str
-        },
-        copy: function () {
+          return str
+        })
+     
+
+        function copy() {
           var copyText = document.querySelector("#pwd");
           copyText.select();
           document.execCommand("copy");
           copyText.setSelectionRange(0, 0)
-        },
-        onChange: function () {
-          this.generate()
+        }
+
+        return {
+          password,
+          lengthStr,
+          charset,
+          copy
         }
       }
-    }) 
+    }).mount('#app')
   </script>
 </body>
 </html>
