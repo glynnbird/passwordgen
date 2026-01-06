@@ -20,26 +20,10 @@
 <body>
   <div id="app" class="c">
     <div class="card">
-      <h4>Generate Password</h4>
-      <div class="row">Length <select v-model="lengthStr">
-          <option value="12">12</option>
-          <option value="16">16</option>
-          <option value="17">17</option>
-          <option value="18">18</option>
-          <option value="19">19</option>
-          <option value="20">20</option>
-          <option value="25">25</option>
-          <option value="30">30</option>
-        </select></div>
-      <div class="row">Character set <select v-model="charset">
-          <option value="azAZ">Letters</option>
-          <option value="azAZ09">Letters and Numbers</option>
-          <option value="azAZ09Special">Letters,
-            Numbers & Special Characters</option>
-        </select></div>
-      <div class="row">
-        <p v-if="password"><input id="pwd" readonly v-model="password" :size="parseInt(lengthStr) + 5" /><a class="btn"
-            v-on:click="copy">Copy</a></p>
+      <h4>Passwords</h4>
+      <div class="row" v-for="k,i in charsets">
+        <h3>{{i}}</h3>
+        <p><input :id="i" readonly :value="genPassword(k)" /><a class="btn" v-on:click="copy(i)">Copy</a></p>
       </div>
     </div>
   </div>
@@ -47,43 +31,37 @@
     const { createApp, ref, computed } = Vue
 
     // the number of characters to encode by
-    const charsets = {
-      azAZ: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
-      azAZ09: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
-      azAZ09Special: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$%^&*()[];:.,<>'.split('')
-    }
+    const charsets = 
 
     createApp({
       setup() {
-        const lengthStr = ref(1)
-        lengthStr.value = '20'
-        const charset = ref(2)
-        charset.value = 'azAZ'
+        const charsets= ref({
+          azAZ: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
+          azAZ09: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split(''),
+          azAZ09Special: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$%^&*()[];:.,<>'.split('')
+        })
 
-        
-
-        const password = computed(() => {
+        const genPassword = (cs) => {
           let str = ''
-          let cs = charsets[charset.value]
-          let len = parseInt(lengthStr.value)
+          let len = 20
           for (var i = 0; i < len; i++) {
             str += cs[Math.floor(Math.random() * cs.length)]
           }
           return str
-        })
+        }
      
 
-        function copy() {
-          var copyText = document.querySelector("#pwd");
+        function copy(id) {
+          console.log(id)
+          var copyText = document.querySelector("#"+id);
           copyText.select();
           document.execCommand("copy");
           copyText.setSelectionRange(0, 0)
         }
 
         return {
-          password,
-          lengthStr,
-          charset,
+          genPassword,
+          charsets,
           copy
         }
       }
